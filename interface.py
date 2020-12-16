@@ -2,8 +2,9 @@
 The main file to start with.
 Responsible for interface.
 """
-from tkinter import Tk, ttk, filedialog, Text, END
+from tkinter import Tk, ttk, filedialog, END
 from preparation import get_raw_path, read_all_txt_from_dir
+from customtext import CustomText
 
 
 class Root(Tk):
@@ -62,6 +63,16 @@ class Root(Tk):
 
     def display_result(self):
         self.entered_str = self.entry_word.get()
+
+        self.result_text = CustomText(self)
+        self.result_text.tag_configure("Pink", foreground="#ff087f")
+        self.result_text.insert(END, 'First word, wordness awordlalala')
+
+        REGEX = None
+
+        self.result_text.highlight_pattern(REGEX, "Pink")
+        self.result_text.config(width=50, height=50)
+        self.result_text.grid(column=0, row=6, columnspan=2)
 
 
 # Starting the application by drawing the new window
