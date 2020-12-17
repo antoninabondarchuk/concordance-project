@@ -62,19 +62,43 @@ class Root(Tk):
         self.window_spin.grid(column=1, row=4)
 
     def display_result(self):
-        self.entered_str = self.entry_word.get()
-
         self.result_text = CustomText(self)
         self.result_text.tag_configure("Pink", foreground="#ff087f")
-        self.result_text.insert(END, 'First word, wordness awordlalala')
+        self.result_text.config(width=90, height=30)
+        self.result_text.grid(column=0, row=6, columnspan=2,
+                              padx=20, pady=20)
 
-        REGEX = None
+        self.text_scroll = ttk.Scrollbar(self,
+            command=self.result_text.yview, orient="vertical")
+        self.text_scroll.grid(row=6, column=1, sticky='nse',
+                              padx=5, pady=20)
+
+        self.result_text.configure(yscrollcommand=self.text_scroll.set)
+
+        entered_str = self.entry_word.get().strip()
+        entered_word = (entered_str[:-1]
+                        if entered_str[-1] == '*' else entered_str)
+
+        for file in self.files_list:
+            self.result_text.insert(END, file + '\n' * 3)
+
+            with open(file, encoding="utf8") as f:
+                line_num = 1
+                for line in f:
+                    line_result = f'Line #{line_num}: {line}' + '\n' * 2
+                    self.result_text.insert(END, line_result)
+                    line_num += 1
+
+        REGEX = r'(?i) {}'.format(entered_word)
+        if entered_str[-1] == '*':
+            REGEX += r'\w*'
+        else:
+            REGEX += ' '
 
         self.result_text.highlight_pattern(REGEX, "Pink")
-        self.result_text.config(width=50, height=50)
-        self.result_text.grid(column=0, row=6, columnspan=2)
 
 
 # Starting the application by drawing the new window
 root = Root()
+root.resizable(False, False)
 root.mainloop()
